@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Eightfold Interview Setup</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
+        .box { background: white; padding: 40px; border-radius: 12px; width: 400px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); text-align: center; }
+        h2 { margin-top: 0; color: #1a73e8; font-size: 24px; }
+        p { color: #666; margin-bottom: 20px; font-size: 14px; }
+        
+        label { display: block; text-align: left; margin-top: 15px; font-weight: 600; color: #333; font-size: 14px; }
+        
+        select, input { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 8px; 
+            border: 1px solid #ccc; 
+            border-radius: 6px; 
+            box-sizing: border-box; /* Fix padding width issue */
+            font-size: 14px;
+        }
+
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            margin-top: 25px; 
+            background: #1a73e8; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        button:hover { background: #1557b0; }
+        
+        .success-msg {
+            color: #137333;
+            background: #e6f4ea;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Start Interview</h2>
+        <p>Select a role and upload a resume context.</p>
+        
+        <form id="form">
+            <label>Target Role:</label>
+            <select name="role" required>
+                <optgroup label="Engineering">
+                    <option value="Software Engineer">Software Engineer (General)</option>
+                    <option value="Backend Engineer">Backend Engineer</option>
+                    <option value="Frontend Developer">Frontend Developer</option>
+                    <option value="Full Stack Developer">Full Stack Developer</option>
+                    <option value="DevOps Engineer">DevOps Engineer</option>
+                    <option value="Data Scientist">Data Scientist</option>
+                    <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+                </optgroup>
+                
+                <optgroup label="Product & Design">
+                    <option value="Product Manager">Product Manager</option>
+                    <option value="UI/UX Designer">UI/UX Designer</option>
+                    <option value="Product Analyst">Product Analyst</option>
+                </optgroup>
+
+                <optgroup label="Business & Sales">
+                    <option value="Sales Representative">Sales Representative</option>
+                    <option value="Account Executive">Account Executive</option>
+                    <option value="Customer Success Manager">Customer Success Manager</option>
+                    <option value="Marketing Specialist">Marketing Specialist</option>
+                    <option value="HR Specialist">HR Specialist</option>
+                </optgroup>
+            </select>
+
+            <label>Resume (PDF):</label>
+            <input type="file" name="resume" accept=".pdf" required>
+
+            <button type="submit" id="submitBtn">Upload & Start</button>
+        </form>
+        
+        <div id="msg" class="success-msg">Context Uploaded! Opening Agent...</div>
+    </div>
+
+    <script>
+        document.getElementById('form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const msg = document.getElementById('msg');
+            
+            btn.innerText = "Uploading...";
+            btn.disabled = true;
+
+            try {
+                await fetch('/upload', { method: 'POST', body: new FormData(e.target) });
+                
+                btn.innerText = "Done!";
+                msg.style.display = 'block';
+                
+                // Wait 1s then open playground
+                setTimeout(() => {
+                    window.open('https://agents-playground.livekit.io/', '_blank');
+                    btn.disabled = false;
+                    btn.innerText = "Upload & Start";
+                }, 1500);
+            } catch (err) {
+                alert("Error uploading file. Please try again.");
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
